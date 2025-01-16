@@ -1,13 +1,13 @@
+import datetime
 from collections import defaultdict
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-from jinja2 import Environment, FileSystemLoader, select_autoescape
-from pprint import pprint
-import datetime
+
 import pandas
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from format_tools import get_year_word
 
-excel_data_df = pandas.read_excel('wine2.xlsx', sheet_name='wine')
+excel_data_df = pandas.read_excel('wine3.xlsx', sheet_name='wine')
 excel_data_df = excel_data_df.sort_values(by=['Категория', 'Цена'])
 
 
@@ -19,9 +19,8 @@ for _, row in excel_data_df.iterrows():
         'Название': row['Название'],
         'Сорт': row['Сорт'] if pandas.notna(row['Сорт']) else '',
         'Цена': row['Цена'],
+        'Акция': row['Акция'] if pandas.notna(row['Акция']) else ''
     })
-
-pprint(wines)
 
 env = Environment(
     loader=FileSystemLoader('.'),
