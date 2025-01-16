@@ -1,14 +1,27 @@
+from collections import defaultdict
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from pprint import pprint
 import datetime
 import pandas
 
 from format_tools import get_year_word
 
-excel_data_df = pandas.read_excel('wine.xlsx', sheet_name='wine')
+excel_data_df = pandas.read_excel('wine2.xlsx', sheet_name='wine')
+excel_data_df = excel_data_df.sort_values(by=['Категория', 'Цена'])
 
 
-wines = excel_data_df.to_dict(orient='records')
+wines = defaultdict(list)
+for _, row in excel_data_df.iterrows():
+    wines[row['Категория']].append({
+        'Картинка': row['Картинка'],
+        'Категория': row['Категория'],
+        'Название': row['Название'],
+        'Сорт': row['Сорт'] if pandas.notna(row['Сорт']) else '',
+        'Цена': row['Цена'],
+    })
+
+pprint(wines)
 
 env = Environment(
     loader=FileSystemLoader('.'),
