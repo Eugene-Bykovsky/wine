@@ -1,3 +1,5 @@
+import argparse
+import os
 import datetime
 from collections import defaultdict
 from http.server import HTTPServer, SimpleHTTPRequestHandler
@@ -9,7 +11,23 @@ from format_tools import get_year_word
 
 
 def main():
-    excel_data_df = pandas.read_excel('wine3.xlsx', sheet_name='wine')
+    parser = argparse.ArgumentParser(
+        description="Скрипт для генерации HTML-страницы с информацией о винах."
+    )
+    parser.add_argument(
+        "--file",
+        default=os.getenv("WINE_FILE", "wine3.xlsx"),
+        help="Путь к файлу с данными. "
+             "По умолчанию используется 'wine3.xlsx' "
+             "или значение переменной окружения WINE_FILE."
+    )
+    args = parser.parse_args()
+
+    if not os.path.exists(args.file):
+        print(f"Ошибка: Файл '{args.file}' не найден.")
+        return
+
+    excel_data_df = pandas.read_excel(args.file, sheet_name='wine')
     excel_data_df = excel_data_df.sort_values(by=['Категория', 'Цена'])
 
     wines = defaultdict(list)
